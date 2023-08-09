@@ -17,7 +17,10 @@ export default async function medusaRequest(
       "Content-Type": "application/json",
       "x-publishable-key": MEDUSA_API_KEY,
     },
-    next: { revalidate: parseInt(REVALIDATE_WINDOW) },
+    next: {
+      revalidate:
+        process.env.NODE_ENV === "production" ? parseInt(REVALIDATE_WINDOW) : 0,
+    },
   }
 
   if (payload) {

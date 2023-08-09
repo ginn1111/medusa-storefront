@@ -12,6 +12,7 @@ module.exports = withStoreConfig({
       "medusa-public-images.s3.eu-west-1.amazonaws.com",
       "localhost",
       "medusa-server-testing.s3.amazonaws.com",
+      "172.18.139.94",
     ],
   },
 })
