@@ -1,5 +1,6 @@
+import { findCheapestPrice } from "@lib/util/prices"
 import { formatAmount, useCart, useProducts } from "medusa-react"
-import { useEffect, useMemo } from "react"
+import { useEffect, useMemo, useRef } from "react"
 import { CalculatedVariant } from "types/medusa"
 
 type useProductPriceProps = {
@@ -9,6 +10,7 @@ type useProductPriceProps = {
 
 const useProductPrice = ({ id, variantId }: useProductPriceProps) => {
   const { cart } = useCart()
+  const readyRef = useRef(true);
 
   const { products, isLoading, isError, refetch } = useProducts(
     {
@@ -44,6 +46,17 @@ const useProductPrice = ({ id, variantId }: useProductPriceProps) => {
       return prev.calculated_price < curr.calculated_price ? prev : curr
     })
 
+    readyRef.current = false
+    if (!cheapestVariant?.original_price) {
+      return {
+        calculated_price: "Not available in your region",
+        original_price: "Not available in your region",
+        price_type: cheapestVariant.calculated_price_type,
+        percentage_diff: 0
+      }
+    }
+
+    readyRef.current = true
     return {
       calculated_price: formatAmount({
         amount: cheapestVariant.calculated_price,
@@ -72,10 +85,22 @@ const useProductPrice = ({ id, variantId }: useProductPriceProps) => {
       (v) => v.id === variantId || v.sku === variantId
     ) as unknown as CalculatedVariant
 
+
+    readyRef.current = false
     if (!variant) {
       return null
     }
 
+
+    if (!variant?.original_price)
+      return {
+        calculated_price: "Not available in your region",
+        original_price: "Not available in your region",
+        price_type: variant.calculated_price_type,
+        percentage_diff: 0
+      }
+
+    readyRef.current = true
     return {
       calculated_price: formatAmount({
         amount: variant.calculated_price,
@@ -101,6 +126,7 @@ const useProductPrice = ({ id, variantId }: useProductPriceProps) => {
     variantPrice,
     isLoading,
     isError,
+    ready: readyRef.current
   }
 }
 

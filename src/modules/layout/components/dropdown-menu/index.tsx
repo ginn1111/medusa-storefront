@@ -3,6 +3,7 @@ import {
   useFeaturedProductsQuery,
   useNavigationCollections,
 } from "@lib/hooks/use-layout-data"
+import usePreviews from "@lib/hooks/use-previews"
 import repeat from "@lib/util/repeat"
 import ProductPreview from "@modules/products/components/product-preview"
 import SkeletonProductPreview from "@modules/skeletons/components/skeleton-product-preview"
@@ -17,8 +18,7 @@ const DropdownMenu = () => {
   const { push } = useRouter()
   const { data: collections, isLoading: loadingCollections } =
     useNavigationCollections()
-  const { data: products, isLoading: loadingProducts } =
-    useFeaturedProductsQuery()
+  const { data: products, isLoading: loadingProducts } = useFeaturedProductsQuery()
 
   return (
     <div

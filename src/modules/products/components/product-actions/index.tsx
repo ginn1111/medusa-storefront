@@ -6,14 +6,13 @@ import OptionSelect from "@modules/products/components/option-select"
 import clsx from "clsx"
 import Link from "next/link"
 import React, { useMemo } from "react"
-import { Product } from "types/medusa"
 
 type ProductActionsProps = {
   product: PricedProduct
 }
 
 const ProductActions: React.FC<ProductActionsProps> = ({ product }) => {
-  const { updateOptions, addToCart, options, inStock, variant } =
+  const { updateOptions, addToCart, options, inStock, variant, formattedPrice, disabled } =
     useProductActions()
 
   const price = useProductPrice({ id: product.id!, variantId: variant?.id })
@@ -63,7 +62,7 @@ const ProductActions: React.FC<ProductActionsProps> = ({ product }) => {
                 "text-rose-600": selectedPrice.price_type === "sale",
               })}
             >
-              {selectedPrice.calculated_price}
+              {selectedPrice.original_price}
             </span>
             {selectedPrice.price_type === "sale" && (
               <>
@@ -84,9 +83,12 @@ const ProductActions: React.FC<ProductActionsProps> = ({ product }) => {
         )}
       </div>
 
-      <Button onClick={addToCart}>
-        {!inStock ? "Out of stock" : "Add to cart"}
-      </Button>
+
+      {price.ready &&
+        <Button onClick={addToCart} disabled={!inStock}>
+          {!inStock ? "Out of stock" : "Add to cart"}
+        </Button>
+      }
     </div>
   )
 }

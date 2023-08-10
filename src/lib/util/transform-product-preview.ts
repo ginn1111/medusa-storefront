@@ -22,11 +22,26 @@ const transformProductPreview = (
     }, variants[0])
   }
 
-  return {
+  const productInfo = {
     id: product.id!,
     title: product.title!,
     handle: product.handle!,
     thumbnail: product.thumbnail!,
+  }
+  if (!cheapestVariant?.original_price) {
+    return {
+      ...productInfo,
+      price: {
+        calculated_price: "Not available in your region",
+        original_price: "Not available in your region",
+        price_type: "default",
+        difference: "0",
+      },
+    }
+  }
+
+  return {
+    ...productInfo,
     price: cheapestVariant
       ? {
           calculated_price: formatAmount({
