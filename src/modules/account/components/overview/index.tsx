@@ -3,6 +3,7 @@ import ChevronDown from "@modules/common/icons/chevron-down"
 import MapPin from "@modules/common/icons/map-pin"
 import Package from "@modules/common/icons/package"
 import User from "@modules/common/icons/user"
+import OrderStatus from "@modules/order/components/order-status"
 import { formatAmount } from "medusa-react"
 import Link from "next/link"
 
@@ -110,16 +111,19 @@ const Overview = ({ orders, customer }: OverviewProps) => {
                 {orders ? (
                   orders.slice(0, 5).map((order) => {
                     return (
-                      <li key={order.id}>
+                      <li key={order.id} className="relative">
                         <Link href={`/order/details/${order.id}`}>
                           <div className="bg-gray-50 flex justify-between items-center p-4">
-                            <div className="grid grid-cols-3 grid-rows-2 text-small-regular gap-x-4 flex-1">
+                            <div className="grid grid-cols-4 grid-rows-2 text-small-regular gap-x-4 flex-1">
                               <span className="font-semibold">Date placed</span>
                               <span className="font-semibold">
                                 Order number
                               </span>
                               <span className="font-semibold">
                                 Total amount
+                              </span>
+                              <span className="font-semibold">
+                                Status
                               </span>
                               <span>
                                 {new Date(order.created_at).toDateString()}
@@ -132,7 +136,10 @@ const Overview = ({ orders, customer }: OverviewProps) => {
                                   includeTaxes: false,
                                 })}
                               </span>
+
+                              <OrderStatus isShowIcon={false} className="!ml-0 !static" status={order.status} fulfillStatus={order.fulfillment_status} paymentStatus={order.payment_status} />
                             </div>
+
                             <button
                               className="flex items-center justify-between"
                               onClick={close}
@@ -144,6 +151,7 @@ const Overview = ({ orders, customer }: OverviewProps) => {
                             </button>
                           </div>
                         </Link>
+
                       </li>
                     )
                   })
