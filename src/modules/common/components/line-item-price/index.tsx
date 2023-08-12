@@ -27,7 +27,7 @@ const LineItemPrice = ({
         })}
       >
         {formatAmount({
-          amount: originalPrice || 0,
+          amount: originalPrice || item.total || 0,
           region: region,
           includeTaxes: false,
         })}
