@@ -14,7 +14,10 @@ const CartTotals: React.FC<CartTotalsProps> = ({ cart }) => {
     tax_total,
     shipping_total,
     total,
+    shipping_tax_total,
+    item_tax_total,
   } = cart
+  console.log("🚀 ~ file: index.tsx:20 ~ cart:", cart)
 
   const getAmount = (amount: number | null | undefined) => {
     return formatAmount({
@@ -48,9 +51,12 @@ const CartTotals: React.FC<CartTotalsProps> = ({ cart }) => {
             <span>Shipping</span>
             <span>{getAmount(shipping_total)}</span>
           </div>
-          <div className="flex items-center justify-between">
-            <span>Taxes</span>
-            <span>{getAmount(tax_total)}</span>
+          <div className="flex flex-col justify-between">
+            <TaxLine title="Taxes (total)" fmtAmount={getAmount(tax_total)} />
+            <ul className="pl-5">
+              {shipping_tax_total !== 0 && <TaxLine title="Shipping" fmtAmount={getAmount(shipping_tax_total)} />}
+              {item_tax_total !== 0 && <TaxLine title="Items" fmtAmount={getAmount(item_tax_total)} />}
+            </ul>
           </div>
         </div>
         <div className="h-px w-full border-b border-gray-200 border-dashed my-4" />
@@ -61,6 +67,18 @@ const CartTotals: React.FC<CartTotalsProps> = ({ cart }) => {
       </div>
     </div>
   )
+}
+
+type TaxLineProps = {
+  title: string;
+  fmtAmount: string;
+}
+
+const TaxLine: React.FC<TaxLineProps> = ({ title, fmtAmount }) => {
+  return <li className="flex items-center justify-between">
+    <span>{title}</span>
+    <span>{fmtAmount}</span>
+  </li>
 }
 
 export default CartTotals

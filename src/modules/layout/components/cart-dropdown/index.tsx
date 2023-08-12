@@ -104,7 +104,7 @@ const CartDropdown = () => {
                       {formatAmount({
                         amount: cart.subtotal || 0,
                         region: cart.region,
-                        includeTaxes: false,
+                        includeTaxes: true,
                       })}
                     </span>
                   </div>

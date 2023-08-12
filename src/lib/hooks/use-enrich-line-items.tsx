@@ -16,14 +16,16 @@ const useEnrichedLineItems = (lineItems?: LineItem[], cartId?: string) => {
       return {
         id: lineItems.map((lineItem) => lineItem.variant.product_id),
         cart_id: cartId,
+        region_id: cart?.region_id
       }
     }
 
     return {
       id: cart?.items.map((lineItem) => lineItem.variant.product_id),
       cart_id: cart?.id,
+      region_id: cart?.region_id
     }
-  }, [lineItems, cart?.items, cart?.id, cartId])
+  }, [lineItems, cart?.items, cart?.id, cartId, cart?.region_id])
 
   const { products } = useProducts(queryParams, {
     enabled: !!lineItems || !!cart?.items?.length,
