@@ -11,6 +11,10 @@ import {
 } from "medusa-react"
 import React, { useEffect, useState } from "react"
 import { useCartDropdown } from "./cart-dropdown-context"
+import { MedusaError } from "@medusajs/medusa-js"
+import { toast } from "sonner"
+import { revalidatePath } from "next/cache"
+import Spinner from "@modules/common/icons/spinner"
 
 interface VariantInfoProps {
   variantId: string
@@ -53,7 +57,18 @@ export const StoreProvider = ({ children }: StoreProps) => {
   const { cart, setCart, createCart, updateCart } = useCart()
   const [countryCode, setCountryCode] = useState<string | undefined>(undefined)
   const { timedOpen } = useCartDropdown()
-  const addLineItem = useCreateLineItem(cart?.id!)
+  const addLineItem = useCreateLineItem(cart?.id!, {
+    onError: (error: any) => {
+      try {
+        if (error.response.data.code === 'insufficient_inventory') {
+          toast.error('Product is out of stock!')
+          revalidatePath('/products/[handle]')
+        }
+      } catch (error) {
+        window.location.reload()
+      }
+    },
+  })
   const removeLineItem = useDeleteLineItem(cart?.id!)
   const adjustLineItem = useUpdateLineItem(cart?.id!)
 
@@ -228,25 +243,40 @@ export const StoreProvider = ({ children }: StoreProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const addItem = ({
+  const addItem = async ({
     variantId,
     quantity,
   }: {
     variantId: string
     quantity: number
   }) => {
-    addLineItem.mutate(
+    await addLineItem.mutateAsync(
       {
         variant_id: variantId,
         quantity: quantity,
       },
       {
         onSuccess: ({ cart }) => {
+          if (cart.items.length) {
+            const invalidItem = cart.items.find((item: any) => item.subtotal === 0)
+            if (invalidItem) {
+              deleteItem(invalidItem.id)
+              toast.promise(() => removeLineItem.mutateAsync({ lineId: invalidItem.id }), {
+                loading: <Spinner />,
+                success: () => 'Admin just update product, please reload the page!',
+                error: () => {
+                  resetCart()
+                  return 'Some thing went wrong'
+                }
+              })
+              return;
+            }
+          }
           setCart(cart)
           storeCart(cart.id)
           timedOpen()
         },
-        onError: (error) => {
+        onError: (error: any) => {
           handleError(error)
         },
       }

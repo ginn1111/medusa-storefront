@@ -19,7 +19,7 @@
 
   input:focus ~ label,
   input:not(:placeholder-shown) ~ label {
-    @apply -translate-y-2 text-xsmall-regular; 
+    @apply -translate-y-2 text-xsmall-regular;
   }
 
   input:focus ~ label {
@@ -47,11 +47,14 @@
   input[type="search"]::-webkit-search-results-decoration {
     -webkit-appearance: none;
   }
+  [data-sonner-toast] [data-button] {
+    flex-shrink: 0;
+  }
 }
 
 @layer components {
   .content-container {
-    @apply max-w-[1440px] w-full mx-auto px-8
+    @apply max-w-[1440px] w-full mx-auto px-8;
   }
 
   .contrast-btn {

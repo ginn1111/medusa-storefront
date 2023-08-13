@@ -1,5 +1,6 @@
 "use client"
 
+import { Toaster } from 'sonner';
 import { MEDUSA_BACKEND_URL, queryClient } from "@lib/config"
 import { AccountProvider } from "@lib/context/account-context"
 import { CartDropdownProvider } from "@lib/context/cart-dropdown-context"
@@ -20,6 +21,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
           <CartProvider>
             <StoreProvider>
               <AccountProvider>{children}</AccountProvider>
+              <Toaster richColors closeButton position='bottom-right' />
             </StoreProvider>
           </CartProvider>
         </MobileMenuProvider>

@@ -23,6 +23,7 @@ import { useRouter } from "next/navigation"
 import React, { createContext, useContext, useEffect, useMemo, useRef } from "react"
 import { FormProvider, useForm, useFormContext } from "react-hook-form"
 import { useStore } from "./store-context"
+import { toast } from "sonner"
 
 type AddressValues = {
   first_name: string
@@ -113,6 +114,31 @@ export const CheckoutProvider = ({ children }: CheckoutProviderProps) => {
       ? isEqual(cart.billing_address, cart.shipping_address)
       : true
   )
+
+
+  useEffect(() => {
+    if (cart) {
+      const items = cart.items.filter((item: any) => item.variant.inventory_quantity === 0)
+      if (items?.length) {
+        const toastId = toast(items.map((item: any) => item.title).join(', ') + ' is out of stock!', {
+          style: {
+            display: 'flex'
+          },
+          action: {
+            label: 'Go to cart',
+            onClick: () => push('/cart')
+          },
+          className: 'bg-red',
+          duration: Infinity,
+        })
+        return () => {
+          toast.dismiss(toastId)
+        }
+      }
+    }
+
+  }, [cart])
+
 
   /**
    * Boolean that indicates if a part of the checkout is loading.
