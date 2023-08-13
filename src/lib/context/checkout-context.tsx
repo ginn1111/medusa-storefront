@@ -20,7 +20,7 @@ import {
   useUpdateCart,
 } from "medusa-react"
 import { useRouter } from "next/navigation"
-import React, { createContext, useContext, useEffect, useMemo } from "react"
+import React, { createContext, useContext, useEffect, useMemo, useRef } from "react"
 import { FormProvider, useForm, useFormContext } from "react-hook-form"
 import { useStore } from "./store-context"
 
@@ -76,6 +76,10 @@ export const CheckoutProvider = ({ children }: CheckoutProviderProps) => {
     },
     completeCheckout: { mutate: complete, isLoading: completingCheckout },
   } = useCart()
+
+
+  const idempotencyKeyRef = useRef<string>()
+  const cartIdRef = useRef<string>()
 
   const { customer } = useMeCustomer()
   const { countryCode } = useStore()
@@ -200,9 +204,11 @@ export const CheckoutProvider = ({ children }: CheckoutProviderProps) => {
    */
   const createPaymentSession = async (cartId: string) => {
     return medusaClient.carts
-      .createPaymentSessions(cartId, {
-        "Idempotency-Key": IDEMPOTENCY_KEY,
-      })
+      .createPaymentSessions(cartId,
+        {
+          "Idempotency-Key": IDEMPOTENCY_KEY,
+        }
+      )
       .then(({ cart }) => cart)
       .catch(() => null)
   }
@@ -310,16 +316,36 @@ export const CheckoutProvider = ({ children }: CheckoutProviderProps) => {
     })
   }
 
+  const handleCompleteCartSuccess = (orderId: string) => {
+    resetCart()
+    push(`/order/confirmed/${orderId}`)
+  }
+
+  const handleCompleteCart = (idempotencyKey: string | undefined) => {
+    complete({
+      idempotency_key: idempotencyKey
+    } as any, {
+      onSuccess: ({ data }) => {
+        handleCompleteCartSuccess(data.id)
+      },
+      onError: async (error: any) => {
+        cartIdRef.current = cart?.id!
+        idempotencyKeyRef.current = error.response.headers['idempotency-key']
+        if (idempotencyKey && idempotencyKey !== idempotencyKeyRef.current) {
+          const { order } = await medusaClient.orders.retrieveByCartId(cartIdRef.current);
+          handleCompleteCartSuccess(order.id)
+        } else {
+          handleCompleteCart(idempotencyKeyRef.current)
+        }
+      }
+    })
+  }
+
   /**
    * Method to complete the checkout process. This is called when the user clicks the "Complete Checkout" button.
    */
   const onPaymentCompleted = () => {
-    complete(undefined, {
-      onSuccess: ({ data }) => {
-        resetCart()
-        push(`/order/confirmed/${data.id}`)
-      },
-    })
+    handleCompleteCart(undefined)
   }
 
   return (
