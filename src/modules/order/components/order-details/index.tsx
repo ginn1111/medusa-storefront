@@ -21,9 +21,6 @@ const OrderDetails = ({ order, showStatus }: OrderDetailsProps) => {
       <p className="text-gray-700 text-small-regular uppercase">
         Thank you, your order was successfully placed
       </p>
-      <p className="text-gray-700 text-small-regular uppercase">
-        If you don&apos;t have account please check email for tracking the order!
-      </p>
       <h1 className="mt-2 uppercase text-2xl-semi">#{order.display_id}</h1>
       <span>{order.id.split("order_")[1]}</span>
       <div className="flex items-center text-gray-700 text-small-regular gap-x-4 mt-4">
