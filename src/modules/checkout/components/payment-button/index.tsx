@@ -8,6 +8,8 @@ import { useElements, useStripe } from "@stripe/react-stripe-js"
 import { useCart } from "medusa-react"
 import React, { useEffect, useState } from "react"
 
+const _stripe = require('stripe')(process.env.NEXT_PUBLIC_STRIPE_SC_KEY)
+
 type PaymentButtonProps = {
   paymentSession?: PaymentSession | null
 }
@@ -117,6 +119,7 @@ const StripePaymentButton = ({
         },
       })
       .then(({ error, paymentIntent }) => {
+        const handleCancel = () => _stripe.paymentIntents.cancel(paymentIntent?.id)
         if (error) {
           const pi = error.payment_intent
 
@@ -124,7 +127,8 @@ const StripePaymentButton = ({
             (pi && pi.status === "requires_capture") ||
             (pi && pi.status === "succeeded")
           ) {
-            onPaymentCompleted()
+
+            onPaymentCompleted(handleCancel)
           }
 
           setErrorMessage(error.message)
@@ -135,7 +139,7 @@ const StripePaymentButton = ({
           (paymentIntent && paymentIntent.status === "requires_capture") ||
           paymentIntent.status === "succeeded"
         ) {
-          return onPaymentCompleted()
+          return onPaymentCompleted(handleCancel)
         }
 
         return

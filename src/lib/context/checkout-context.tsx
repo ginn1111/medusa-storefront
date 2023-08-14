@@ -56,7 +56,7 @@ interface CheckoutContext {
   setSavedAddress: (address: Address) => void
   setShippingOption: (soId: string) => void
   setPaymentSession: (providerId: string) => void
-  onPaymentCompleted: () => void
+  onPaymentCompleted: (onCancelPayment?: () => Promise<void>) => void
 }
 
 const CheckoutContext = createContext<CheckoutContext | null>(null)
@@ -220,6 +220,11 @@ export const CheckoutProvider = ({ children }: CheckoutProviderProps) => {
         { option_id: soId },
         {
           onSuccess: ({ cart }) => setCart(cart),
+          onError: (error: any) => {
+            if (error.response.status === 400) {
+              handleUpdateCartError()
+            }
+          }
         }
       )
     }
@@ -268,6 +273,11 @@ export const CheckoutProvider = ({ children }: CheckoutProviderProps) => {
           onSuccess: ({ cart }) => {
             setCart(cart)
           },
+          onError: (error: any) => {
+            if (error.response.status === 400) {
+              handleUpdateCartError()
+            }
+          }
         }
       )
     }
@@ -313,6 +323,12 @@ export const CheckoutProvider = ({ children }: CheckoutProviderProps) => {
     }
   }
 
+  const handleUpdateCartError = () => {
+    toast.error('Ops something went wrong!')
+    resetCart();
+    push('/store')
+  }
+
   /**
    * Method that sets the addresses and email on the cart.
    */
@@ -339,6 +355,11 @@ export const CheckoutProvider = ({ children }: CheckoutProviderProps) => {
         setCart(cart)
         prepareFinalSteps()
       },
+      onError: (error: any) => {
+        if (error.response.status === 400) {
+          handleUpdateCartError()
+        }
+      }
     })
   }
 
@@ -347,7 +368,7 @@ export const CheckoutProvider = ({ children }: CheckoutProviderProps) => {
     push(`/order/confirmed/${orderId}`)
   }
 
-  const handleCompleteCart = (idempotencyKey: string | undefined) => {
+  const handleCompleteCart = (idempotencyKey: string | undefined, onCancelPayment?: () => Promise<void>) => {
     complete({
       idempotency_key: idempotencyKey
     } as any, {
@@ -355,6 +376,11 @@ export const CheckoutProvider = ({ children }: CheckoutProviderProps) => {
         handleCompleteCartSuccess(data.id)
       },
       onError: async (error: any) => {
+        if (error.response.status === 400) {
+          await onCancelPayment?.()
+          handleUpdateCartError()
+          return
+        }
         cartIdRef.current = cart?.id!
         idempotencyKeyRef.current = error.response.headers['idempotency-key']
         if (idempotencyKey && idempotencyKey !== idempotencyKeyRef.current) {
@@ -370,8 +396,8 @@ export const CheckoutProvider = ({ children }: CheckoutProviderProps) => {
   /**
    * Method to complete the checkout process. This is called when the user clicks the "Complete Checkout" button.
    */
-  const onPaymentCompleted = () => {
-    handleCompleteCart(undefined)
+  const onPaymentCompleted = (onCancelPayment?: () => Promise<void>) => {
+    handleCompleteCart(undefined, onCancelPayment)
   }
 
   return (

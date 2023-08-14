@@ -9,6 +9,7 @@ import { formatAmount, useCart, useCartShippingOptions } from "medusa-react"
 import React, { useEffect, useMemo } from "react"
 import { Controller, useForm } from "react-hook-form"
 import StepContainer from "../step-container"
+import { useStore } from "@lib/context/store-context"
 
 type ShippingOption = {
   value?: string
@@ -26,6 +27,7 @@ type ShippingFormProps = {
 
 const Shipping: React.FC<ShippingProps> = ({ cart }) => {
   const { addShippingMethod, setCart } = useCart()
+  const { setShippingOption } = useCheckout()
   const {
     control,
     setError,
@@ -50,27 +52,8 @@ const Shipping: React.FC<ShippingProps> = ({ cart }) => {
     refetchShipping()
   }, [cart, refetch])
 
-  const submitShippingOption = (soId: string) => {
-    addShippingMethod.mutate(
-      { option_id: soId },
-      {
-        onSuccess: ({ cart }) => setCart(cart),
-        onError: () =>
-          setError(
-            "soId",
-            {
-              type: "validate",
-              message:
-                "An error occurred while adding shipping. Please try again.",
-            },
-            { shouldFocus: true }
-          ),
-      }
-    )
-  }
-
   const handleChange = (value: string, fn: (value: string) => void) => {
-    submitShippingOption(value)
+    setShippingOption(value)
     fn(value)
   }
 
