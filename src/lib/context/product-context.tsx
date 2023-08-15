@@ -23,6 +23,8 @@ interface ProductContext {
   variant?: Variant
   maxQuantityMet: boolean
   options: Record<string, string>
+  product: PricedProduct,
+  variantRecord: Record<string, Record<string, string>>;
   updateOptions: (options: Record<string, string>) => void
   increaseQuantity: () => void
   decreaseQuantity: () => void
@@ -163,6 +165,8 @@ export const ProductProvider = ({
         updateOptions,
         decreaseQuantity,
         increaseQuantity,
+        variantRecord,
+        product,
         formattedPrice,
       }}
     >
