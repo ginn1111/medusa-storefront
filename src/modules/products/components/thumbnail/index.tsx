@@ -2,7 +2,7 @@ import { Image as MedusaImage } from "@medusajs/medusa"
 import PlaceholderImage from "@modules/common/icons/placeholder-image"
 import clsx from "clsx"
 import Image from "next/image"
-import React from "react"
+import React, { useState } from "react"
 
 type ThumbnailProps = {
   thumbnail?: string | null
@@ -31,13 +31,15 @@ const Thumbnail: React.FC<ThumbnailProps> = ({
   )
 }
 
-const ImageOrPlaceholder = ({
+export const ImageOrPlaceholder = ({
   image,
   size,
 }: Pick<ThumbnailProps, "size"> & { image?: string }) => {
-  return image ? (
+  const [isError, setIsError] = useState(false);
+  return image && !isError ? (
     <Image
       src={image}
+      onError={() => setIsError(true)}
       alt="Thumbnail"
       className="absolute inset-0"
       draggable={false}

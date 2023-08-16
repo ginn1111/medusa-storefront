@@ -50,6 +50,12 @@
   [data-sonner-toast] [data-button] {
     flex-shrink: 0;
   }
+
+  .disabled-scrollbar::-webkit-scrollbar {
+    width: 0;
+    padding: 0;
+    height: 0;
+  }
 }
 
 @layer components {
