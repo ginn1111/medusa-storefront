@@ -42,6 +42,7 @@ const transformProductPreview = (
 
   return {
     ...productInfo,
+    originalPrice: cheapestVariant.original_price,
     price: cheapestVariant
       ? {
           calculated_price: formatAmount({

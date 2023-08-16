@@ -12,9 +12,11 @@ import { useInfiniteQuery } from "@tanstack/react-query"
 
 type InfiniteProductsType = {
   params: StoreGetProductsParams
+  sort: 'inc' | 'desc'
+  hasPrice: boolean
 }
 
-const InfiniteProducts = ({ params }: InfiniteProductsType) => {
+const InfiniteProducts = ({ hasPrice, params, sort }: InfiniteProductsType) => {
   const { cart } = useCart()
 
   const { ref, inView } = useInView()
@@ -43,7 +45,26 @@ const InfiniteProducts = ({ params }: InfiniteProductsType) => {
       }
     )
 
-  const previews = usePreviews({ pages: data?.pages, region: cart?.region })
+  const _previews = usePreviews({ pages: data?.pages, region: cart?.region })
+
+  let previews = useMemo(() => {
+    return _previews.sort((a, b) => {
+      if (sort === 'desc') {
+        return Number(a!.originalPrice) - Number(b!.originalPrice)
+      }
+      if (sort === 'inc') {
+        return Number(b!.originalPrice) - Number(a!.originalPrice)
+      }
+
+      return 0
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(_previews), sort])
+
+  if (hasPrice) {
+    previews = previews.filter(p => !!p.originalPrice)
+  }
+
 
   useEffect(() => {
     if (inView && hasNextPage) {
