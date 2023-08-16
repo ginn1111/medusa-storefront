@@ -2,6 +2,7 @@ import { CheckoutFormValues } from "@lib/context/checkout-context"
 import ConnectForm from "@modules/common/components/connect-form"
 import Input from "@modules/common/components/input"
 import CountrySelect from "../country-select"
+import { REGEX_INTERNATION_PHONE } from "@lib/constants"
 
 const BillingAddress = () => {
   return (
@@ -17,6 +18,7 @@ const BillingAddress = () => {
               autoComplete="given-name"
               errors={errors}
               touched={touchedFields}
+              required
             />
             <Input
               label="Last name"
@@ -26,6 +28,7 @@ const BillingAddress = () => {
               autoComplete="family-name"
               errors={errors}
               touched={touchedFields}
+              required
             />
           </div>
           <Input
@@ -43,6 +46,7 @@ const BillingAddress = () => {
             autoComplete="address-line1"
             errors={errors}
             touched={touchedFields}
+            required
           />
           <Input
             label="Apartments, suite, etc."
@@ -60,6 +64,7 @@ const BillingAddress = () => {
               autoComplete="postal-code"
               errors={errors}
               touched={touchedFields}
+              required
             />
             <Input
               label="City"
@@ -69,6 +74,7 @@ const BillingAddress = () => {
               autoComplete="address-level2"
               errors={errors}
               touched={touchedFields}
+              required
             />
           </div>
           <CountrySelect
@@ -78,6 +84,7 @@ const BillingAddress = () => {
             autoComplete="country"
             errors={errors}
             touched={touchedFields}
+            required
           />
           <Input
             label="State / Province"
@@ -88,7 +95,12 @@ const BillingAddress = () => {
           />
           <Input
             label="Phone"
-            {...register("billing_address.phone")}
+            {...register("billing_address.phone", {
+              pattern: {
+                value: REGEX_INTERNATION_PHONE,
+                message: 'Phone is invalid!'
+              }
+            })}
             autoComplete="tel"
             errors={errors}
             touched={touchedFields}

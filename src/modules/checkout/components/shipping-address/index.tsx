@@ -5,6 +5,7 @@ import Input from "@modules/common/components/input"
 import { useMeCustomer } from "medusa-react"
 import AddressSelect from "../address-select"
 import CountrySelect from "../country-select"
+import { REGEX_EMAIL, REGEX_INTERNATION_PHONE } from "@lib/constants"
 
 const ShippingAddress = () => {
   const { customer } = useMeCustomer()
@@ -25,11 +26,12 @@ const ShippingAddress = () => {
               label="Email"
               {...register("email", {
                 required: "Email is required",
-                pattern: emailRegex,
+                pattern: REGEX_EMAIL,
               })}
               autoComplete="email"
               errors={errors}
               touched={touchedFields}
+              required
             />
             <div className="grid grid-cols-2 gap-x-2">
               <Input
@@ -40,6 +42,7 @@ const ShippingAddress = () => {
                 autoComplete="given-name"
                 errors={errors}
                 touched={touchedFields}
+                required
               />
               <Input
                 label="Last name"
@@ -49,6 +52,7 @@ const ShippingAddress = () => {
                 autoComplete="family-name"
                 errors={errors}
                 touched={touchedFields}
+                required
               />
             </div>
             <Input
@@ -66,6 +70,7 @@ const ShippingAddress = () => {
               autoComplete="address-line1"
               errors={errors}
               touched={touchedFields}
+              required
             />
             <Input
               label="Apartments, suite, etc."
@@ -83,6 +88,7 @@ const ShippingAddress = () => {
                 autoComplete="postal-code"
                 errors={errors}
                 touched={touchedFields}
+                required
               />
               <Input
                 label="City"
@@ -92,6 +98,7 @@ const ShippingAddress = () => {
                 autoComplete="address-level2"
                 errors={errors}
                 touched={touchedFields}
+                required
               />
             </div>
             <CountrySelect
@@ -101,6 +108,7 @@ const ShippingAddress = () => {
               autoComplete="country"
               errors={errors}
               touched={touchedFields}
+              required
             />
             <Input
               label="State / Province"
@@ -111,7 +119,12 @@ const ShippingAddress = () => {
             />
             <Input
               label="Phone"
-              {...register("shipping_address.phone")}
+              {...register("shipping_address.phone", {
+                pattern: {
+                  value: REGEX_INTERNATION_PHONE,
+                  message: 'Phone is invalid!'
+                }
+              })}
               autoComplete="tel"
               errors={errors}
               touched={touchedFields}

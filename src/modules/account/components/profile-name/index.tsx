@@ -21,7 +21,7 @@ const ProfileName: React.FC<MyInformationProps> = ({ customer }) => {
     handleSubmit,
     reset,
     control,
-    formState: { errors },
+    formState: { errors, touchedFields, isDirty },
   } = useForm<UpdateCustomerNameFormData>({
     defaultValues: {
       first_name: customer.first_name,
@@ -78,21 +78,28 @@ const ProfileName: React.FC<MyInformationProps> = ({ customer }) => {
         isSuccess={isSuccess}
         isError={isError}
         clearState={clearState}
+        isDirty={isDirty}
       >
         <div className="grid grid-cols-2 gap-x-4">
           <Input
             label="First name"
             {...register("first_name", {
-              required: true,
+              required: 'Enter first name, please!',
             })}
             defaultValue={firstName}
+            touched={touchedFields}
             errors={errors}
+            required
           />
           <Input
             label="Last name"
-            {...register("last_name", { required: true })}
+            {...register("last_name", {
+              required: 'Enter last name, please!',
+            })}
             defaultValue={lastName}
+            touched={touchedFields}
             errors={errors}
+            required
           />
         </div>
       </AccountInfo>

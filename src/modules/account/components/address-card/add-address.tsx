@@ -1,4 +1,5 @@
 import { medusaClient } from "@lib/config"
+import { REGEX_INTERNATION_PHONE } from "@lib/constants"
 import { useAccount } from "@lib/context/account-context"
 import useToggleState from "@lib/hooks/use-toggle-state"
 import CountrySelect from "@modules/checkout/components/country-select"
@@ -32,7 +33,7 @@ const AddAddress: React.FC = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isDirty, touchedFields },
     reset,
   } = useForm<FormValues>()
 
@@ -53,7 +54,6 @@ const AddAddress: React.FC = () => {
   }
 
   const submit = handleSubmit(async (data: FormValues) => {
-    console.log("submit")
 
     setSubmitting(true)
     setError(undefined)
@@ -98,7 +98,7 @@ const AddAddress: React.FC = () => {
       <Modal isOpen={state} close={handleClose}>
         <Modal.Title>Add address</Modal.Title>
         <Modal.Body>
-          <div className="grid grid-cols-1 gap-y-2">
+          <div className="grid grid-cols-1 gap-y-2 mt-5 min-h-[80vh] max-h-[90vh]">
             <div className="grid grid-cols-2 gap-x-2">
               <Input
                 label="First name"
@@ -107,6 +107,7 @@ const AddAddress: React.FC = () => {
                 })}
                 required
                 errors={errors}
+                touched={touchedFields}
                 autoComplete="given-name"
               />
               <Input
@@ -115,17 +116,21 @@ const AddAddress: React.FC = () => {
                   required: "Last name is required",
                 })}
                 required
+                touched={touchedFields}
                 errors={errors}
                 autoComplete="family-name"
               />
             </div>
-            <Input label="Company" {...register("company")} errors={errors} />
+            <Input label="Company" {...register("company")} errors={errors}
+              touched={touchedFields}
+            />
             <Input
               label="Address"
               {...register("address_1", {
                 required: "Address is required",
               })}
               required
+              touched={touchedFields}
               errors={errors}
               autoComplete="address-line1"
             />
@@ -134,6 +139,7 @@ const AddAddress: React.FC = () => {
               {...register("address_2")}
               errors={errors}
               autoComplete="address-line2"
+              touched={touchedFields}
             />
             <div className="grid grid-cols-[144px_1fr] gap-x-2">
               <Input
@@ -142,6 +148,7 @@ const AddAddress: React.FC = () => {
                   required: "Postal code is required",
                 })}
                 required
+                touched={touchedFields}
                 errors={errors}
                 autoComplete="postal-code"
               />
@@ -150,6 +157,7 @@ const AddAddress: React.FC = () => {
                 {...register("city", {
                   required: "City is required",
                 })}
+                touched={touchedFields}
                 errors={errors}
                 required
                 autoComplete="locality"
@@ -162,14 +170,23 @@ const AddAddress: React.FC = () => {
               autoComplete="address-level1"
             />
             <CountrySelect
-              {...register("country_code", { required: true })}
+              {...register("country_code", { required: 'Choose your country, please!' })}
               autoComplete="country"
+              errors={errors}
+              touched={touchedFields}
+              required
             />
             <Input
               label="Phone"
-              {...register("phone")}
+              {...register("phone", {
+                pattern: {
+                  value: REGEX_INTERNATION_PHONE,
+                  message: 'Phone is invalid!'
+                }
+              })}
               errors={errors}
               autoComplete="phone"
+              touched={touchedFields}
             />
           </div>
           {error && (
@@ -178,12 +195,12 @@ const AddAddress: React.FC = () => {
         </Modal.Body>
         <Modal.Footer>
           <Button
-            className="!bg-gray-200 !text-gray-900 !border-gray-200 min-h-0"
+            className="!bg-gray-200 !text-gray-900 !border-gray-200 min-h-0 mt-3"
             onClick={handleClose}
           >
             Cancel
           </Button>
-          <Button className="min-h-0" onClick={submit} disabled={submitting}>
+          <Button className="min-h-0 mt-3" onClick={submit} disabled={submitting || !isDirty}>
             Save
             {submitting && <Spinner />}
           </Button>

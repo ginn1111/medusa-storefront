@@ -5,6 +5,7 @@ import { useUpdateMe } from "medusa-react"
 import React, { useEffect } from "react"
 import { useForm, useWatch } from "react-hook-form"
 import AccountInfo from "../account-info"
+import { REGEX_INTERNATION_PHONE } from "@lib/constants"
 
 type MyInformationProps = {
   customer: Omit<Customer, "password_hash">
@@ -20,7 +21,7 @@ const ProfilePhone: React.FC<MyInformationProps> = ({ customer }) => {
     handleSubmit,
     reset,
     control,
-    formState: { errors },
+    formState: { errors, touchedFields, isDirty },
   } = useForm<UpdateCustomerPhoneFormData>({
     defaultValues: {
       phone: customer.phone,
@@ -71,15 +72,22 @@ const ProfilePhone: React.FC<MyInformationProps> = ({ customer }) => {
         isSuccess={isSuccess}
         isError={isError}
         clearState={clearState}
+        isDirty={isDirty}
       >
         <div className="grid grid-cols-1 gap-y-2">
           <Input
             label="Phone"
             {...register("phone", {
-              required: true,
+              required: 'Enter your phone, please',
+              pattern: {
+                value: REGEX_INTERNATION_PHONE,
+                message: 'Phone is invalid!'
+              }
             })}
             defaultValue={phone}
             errors={errors}
+            touched={touchedFields}
+            required
           />
         </div>
       </AccountInfo>

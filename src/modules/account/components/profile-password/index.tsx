@@ -24,7 +24,7 @@ const ProfileName: React.FC<MyInformationProps> = ({ customer }) => {
     register,
     handleSubmit,
     reset,
-    formState: { errors },
+    formState: { errors, isDirty, touchedFields },
     setError,
   } = useForm<UpdateCustomerPasswordFormData>()
 
@@ -91,6 +91,7 @@ const ProfileName: React.FC<MyInformationProps> = ({ customer }) => {
         isError={isError}
         errorMessage={errorMessage}
         clearState={clearState}
+        isDirty={isDirty}
       >
         <div className="grid grid-cols-2 gap-4">
           <Input
@@ -100,18 +101,24 @@ const ProfileName: React.FC<MyInformationProps> = ({ customer }) => {
             })}
             type="password"
             errors={errors}
+            touched={touchedFields}
+            required
           />
           <Input
             label="New password"
             type="password"
             {...register("new_password", { required: true })}
             errors={errors}
+            touched={touchedFields}
+            required
           />
           <Input
             label="Confirm password"
             type="password"
             {...register("confirm_password", { required: true })}
             errors={errors}
+            touched={touchedFields}
+            required
           />
         </div>
       </AccountInfo>

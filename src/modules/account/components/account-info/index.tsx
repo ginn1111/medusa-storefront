@@ -13,6 +13,7 @@ type AccountInfoProps = {
   errorMessage?: string
   clearState: () => void
   children?: React.ReactNode
+  isDirty?: boolean;
 }
 
 const AccountInfo = ({
@@ -24,6 +25,7 @@ const AccountInfo = ({
   clearState,
   errorMessage = "An error occurred, please try again",
   children,
+  isDirty
 }: AccountInfoProps) => {
   const { state, close, toggle } = useToggleState()
 
@@ -117,6 +119,7 @@ const AccountInfo = ({
                 isLoading={isLoading}
                 className="w-full small:max-w-[140px]"
                 type="submit"
+                disabled={!isDirty}
               >
                 Save changes
               </Button>

@@ -1,4 +1,5 @@
 import { medusaClient } from "@lib/config"
+import { REGEX_INTERNATION_PHONE } from "@lib/constants"
 import { useAccount } from "@lib/context/account-context"
 import useToggleState from "@lib/hooks/use-toggle-state"
 import { Address } from "@medusajs/medusa"
@@ -43,7 +44,7 @@ const EditAddress: React.FC<EditAddressProps> = ({
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isDirty, touchedFields },
   } = useForm<FormValues>({
     defaultValues: {
       first_name: address.first_name || undefined,
@@ -159,6 +160,7 @@ const EditAddress: React.FC<EditAddressProps> = ({
                 })}
                 required
                 errors={errors}
+                touched={touchedFields}
                 autoComplete="given-name"
               />
               <Input
@@ -168,6 +170,7 @@ const EditAddress: React.FC<EditAddressProps> = ({
                 })}
                 required
                 errors={errors}
+                touched={touchedFields}
                 autoComplete="family-name"
               />
             </div>
@@ -178,6 +181,7 @@ const EditAddress: React.FC<EditAddressProps> = ({
                 required: "Address is required",
               })}
               required
+              touched={touchedFields}
               errors={errors}
               autoComplete="address-line1"
             />
@@ -185,6 +189,7 @@ const EditAddress: React.FC<EditAddressProps> = ({
               label="Apartment, suite, etc."
               {...register("address_2")}
               errors={errors}
+              touched={touchedFields}
               autoComplete="address-line2"
             />
             <div className="grid grid-cols-[144px_1fr] gap-x-2">
@@ -195,6 +200,7 @@ const EditAddress: React.FC<EditAddressProps> = ({
                 })}
                 required
                 errors={errors}
+                touched={touchedFields}
                 autoComplete="postal-code"
               />
               <Input
@@ -203,6 +209,7 @@ const EditAddress: React.FC<EditAddressProps> = ({
                   required: "City is required",
                 })}
                 errors={errors}
+                touched={touchedFields}
                 required
                 autoComplete="locality"
               />
@@ -211,17 +218,27 @@ const EditAddress: React.FC<EditAddressProps> = ({
               label="Province / State"
               {...register("province")}
               errors={errors}
+              touched={touchedFields}
               autoComplete="address-level1"
             />
             <CountrySelect
-              {...register("country_code", { required: true })}
+              {...register("country_code", { required: 'Choose your country, please!' })}
               autoComplete="country"
+              errors={errors}
+              touched={touchedFields}
+              required
             />
             <Input
               label="Phone"
-              {...register("phone")}
+              {...register("phone", {
+                pattern: {
+                  value: REGEX_INTERNATION_PHONE,
+                  message: 'Phone is invalid!'
+                }
+              })}
               errors={errors}
               autoComplete="phone"
+              touched={touchedFields}
             />
           </div>
           {error && (
@@ -232,7 +249,7 @@ const EditAddress: React.FC<EditAddressProps> = ({
           <Button variant="secondary" onClick={close}>
             Cancel
           </Button>
-          <Button onClick={submit} disabled={submitting}>
+          <Button onClick={submit} disabled={submitting || !isDirty}>
             Save
             {submitting && <Spinner />}
           </Button>

@@ -22,7 +22,7 @@ const ProfileBillingAddress: React.FC<MyInformationProps> = ({ customer }) => {
     handleSubmit,
     reset,
     control,
-    formState: { errors },
+    formState: { errors, touchedFields, isDirty },
   } = useForm<UpdateCustomerNameFormData>({
     defaultValues: {
       ...mapBillingAddressToFormData({ customer }),
@@ -144,22 +144,27 @@ const ProfileBillingAddress: React.FC<MyInformationProps> = ({ customer }) => {
         isSuccess={isSuccess}
         isError={isError}
         clearState={clearState}
+        isDirty={isDirty}
       >
         <div className="grid grid-cols-1 gap-y-2">
           <div className="grid grid-cols-2 gap-x-2">
             <Input
               label="First name"
               {...register("billing_address.first_name", {
-                required: true,
+                required: 'Enter first name, please!',
               })}
               defaultValue={firstName}
               errors={errors}
+              touched={touchedFields}
+              required
             />
             <Input
               label="Last name"
-              {...register("billing_address.last_name", { required: true })}
+              {...register("billing_address.last_name", { required: 'Enter last name, please!' })}
               defaultValue={lastName}
               errors={errors}
+              touched={touchedFields}
+              required
             />
           </div>
           <Input
@@ -167,31 +172,39 @@ const ProfileBillingAddress: React.FC<MyInformationProps> = ({ customer }) => {
             {...register("billing_address.company")}
             defaultValue={company}
             errors={errors}
+            touched={touchedFields}
           />
           <Input
             label="Address"
-            {...register("billing_address.address_1", { required: true })}
+            {...register("billing_address.address_1", { required: 'Enter address, please!' })}
             defaultValue={address1}
             errors={errors}
+            touched={touchedFields}
+            required
           />
           <Input
             label="Apartment, suite, etc."
             {...register("billing_address.address_2")}
             defaultValue={address2}
             errors={errors}
+            touched={touchedFields}
           />
           <div className="grid grid-cols-[144px_1fr] gap-x-2">
             <Input
               label="Postal code"
-              {...register("billing_address.postal_code", { required: true })}
+              {...register("billing_address.postal_code", { required: 'Enter postal code, please!' })}
               defaultValue={postalCode}
               errors={errors}
+              touched={touchedFields}
+              required
             />
             <Input
               label="City"
-              {...register("billing_address.city", { required: true })}
+              {...register("billing_address.city", { required: 'Enter your city, please!' })}
               defaultValue={city}
               errors={errors}
+              touched={touchedFields}
+              required
             />
           </div>
           <Input
@@ -201,8 +214,11 @@ const ProfileBillingAddress: React.FC<MyInformationProps> = ({ customer }) => {
             errors={errors}
           />
           <NativeSelect
-            {...register("billing_address.country_code", { required: true })}
+            {...register("billing_address.country_code", { required: 'Choose your country, please' })}
             defaultValue={countryCode}
+            touched={touchedFields}
+            errors={errors}
+            required
           >
             <option value="">-</option>
             {regionOptions.map((option, i) => {

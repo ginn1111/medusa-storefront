@@ -5,6 +5,7 @@ import { useUpdateMe } from "medusa-react"
 import React, { useEffect } from "react"
 import { useForm, useWatch } from "react-hook-form"
 import AccountInfo from "../account-info"
+import { REGEX_EMAIL } from "@lib/constants"
 
 type MyInformationProps = {
   customer: Omit<Customer, "password_hash">
@@ -24,7 +25,7 @@ const ProfileEmail: React.FC<MyInformationProps> = ({ customer }) => {
     handleSubmit,
     reset,
     control,
-    formState: { errors },
+    formState: { errors, touchedFields, isDirty },
   } = useForm<UpdateCustomerEmailFormData>({
     defaultValues: {
       email: customer.email,
@@ -79,15 +80,22 @@ const ProfileEmail: React.FC<MyInformationProps> = ({ customer }) => {
         isError={isError}
         errorMessage={errorMessage}
         clearState={clearState}
+        isDirty={isDirty}
       >
         <div className="grid grid-cols-1 gap-y-2">
           <Input
             label="Email"
             {...register("email", {
-              required: true,
+              required: 'Enter email, please!',
+              pattern: {
+                value: REGEX_EMAIL,
+                message: 'Email is not invalid'
+              }
             })}
             defaultValue={email}
             errors={errors}
+            touched={touchedFields}
+            required
           />
         </div>
       </AccountInfo>
