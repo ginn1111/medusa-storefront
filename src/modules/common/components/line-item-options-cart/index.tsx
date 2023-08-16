@@ -12,8 +12,8 @@ const LineItemOptions = ({ item }: LineItemOptionsProps) => {
   const { product, options, variantRecord } = useProductActions()
   const { cart, setCart } = useCart()
   const { resetCart } = useStore()
-  const addLineItem = useCreateLineItem(cart.id!)
-  const deleteLineItem = useDeleteLineItem(cart.id!)
+  const addLineItem = useCreateLineItem(cart?.id!)
+  const deleteLineItem = useDeleteLineItem(cart?.id!)
 
   const handleUpdateOptions = async (option: Record<string, string>) => {
 
@@ -36,7 +36,8 @@ const LineItemOptions = ({ item }: LineItemOptionsProps) => {
       await deleteLineItem.mutateAsync({ lineId: item.id })
       stage = 'deleted'
       const { cart } = await addLineItem.mutateAsync({
-        variant_id: variant?.id, quantity: variant.inventory_quantity >= item.quantity ? item.quantity : variant.inventory_quantity
+        variant_id: variant.id!,
+        quantity: variant.inventory_quantity! >= item.quantity ? item.quantity : variant.inventory_quantity!
       })
       setCart(cart)
     } catch (error: any) {
@@ -46,7 +47,7 @@ const LineItemOptions = ({ item }: LineItemOptionsProps) => {
       if (stage === 'deleted') {
         try {
           const { cart } = await addLineItem.mutateAsync({
-            variant_id: item.variant_id,
+            variant_id: item.variant_id!,
             quantity: item.quantity
           })
           setCart(cart)
@@ -61,15 +62,16 @@ const LineItemOptions = ({ item }: LineItemOptionsProps) => {
   return (
     <div className="text-small-regular text-gray-700">
       {product.variants.length > 1 && (
-        <div className="my-8 flex flex-col gap-y-6">
+        <div className="w-full grid grid-cols-2 xl:grid-cols-3">
           {(product.options || []).map((option) => {
             return (
               <div key={option.id}>
                 <OptionSelect
                   option={option}
-                  current={variantRecord[item.variant_id][option.id]}
+                  current={variantRecord[item.variant_id!][option.id]}
                   updateOption={handleUpdateOptions}
                   title={option.title}
+                  containerClassName="xl:grid-cols-3 small:grid-cols-2"
                 />
               </div>
             )

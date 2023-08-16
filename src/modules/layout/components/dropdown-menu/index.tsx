@@ -5,6 +5,7 @@ import {
 } from "@lib/hooks/use-layout-data"
 import usePreviews from "@lib/hooks/use-previews"
 import repeat from "@lib/util/repeat"
+import Logo from "@modules/common/icons/logo"
 import ProductPreview from "@modules/products/components/product-preview"
 import SkeletonProductPreview from "@modules/skeletons/components/skeleton-product-preview"
 import clsx from "clsx"
@@ -32,11 +33,17 @@ const DropdownMenu = () => {
             <Link href="/shop" className="relative flex h-full" passHref>
               <Popover.Button
                 className={clsx(
-                  "relative h-full flex items-center transition-all ease-out duration-200 outline-none"
+                  "relative h-full flex items-center transition-all ease-out duration-200 outline-none "
                 )}
-                onClick={() => push("/store")}
+                onClick={() => push("/")}
               >
-                Store
+                <div className="bg-black p-2 rounded-md" role="button">
+
+                  <Logo />
+                </div>
+                <h1 className="ml-2 text-xl font-bold">
+                  ACME
+                </h1>
               </Popover.Button>
             </Link>
 

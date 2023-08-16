@@ -2,7 +2,7 @@ import React from "react"
 
 type CheckboxProps = {
   checked?: boolean
-  onChange?: () => void
+  onChange?: (...args: unknown[]) => void
   label: string
 }
 
@@ -13,7 +13,7 @@ const Checkbox: React.FC<CheckboxProps> = ({
 }) => {
   return (
     <button
-      className="text-base-regular flex items-center gap-x-2"
+      className="text-base-regular flex items-center gap-x-2 flex-shrink-0"
       role="checkbox"
       type="button"
       aria-checked={checked}
@@ -22,11 +22,12 @@ const Checkbox: React.FC<CheckboxProps> = ({
       <div
         role="checkbox"
         aria-checked={checked}
-        className="border border-gray-900 w-5 h-5 flex items-center justify-center"
+        className="border border-gray-900 w-5 h-5 flex items-center justify-center flex-shrink-0"
       >
         {checked ? "✓" : null}
       </div>
-      <span>{label}</span>
+
+      <span className="line-clamp-1">{label}</span>
     </button>
   )
 }

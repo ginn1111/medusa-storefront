@@ -6,7 +6,7 @@ import Button from "@modules/common/components/button"
 import LineItemOptions from "@modules/common/components/line-item-options"
 import LineItemPrice from "@modules/common/components/line-item-price"
 import Trash from "@modules/common/icons/trash"
-import Thumbnail from "@modules/products/components/thumbnail"
+import Thumbnail, { ImageOrPlaceholder } from "@modules/products/components/thumbnail"
 import { formatAmount, useCart } from "medusa-react"
 import Link from "next/link"
 import { Fragment } from "react"
@@ -80,15 +80,13 @@ const CartDropdown = () => {
                             </div>
                           </div>
                           <div className="flex items-end justify-between text-small-regular flex-1">
-                            <div>
-                              <button
-                                className="flex items-center gap-x-1 text-gray-500"
-                                onClick={() => deleteItem(item.id)}
-                              >
-                                <Trash size={14} />
-                                <span>Remove</span>
-                              </button>
-                            </div>
+                            <button
+                              className="flex items-center gap-x-1 text-gray-500"
+                              onClick={() => deleteItem(item.id)}
+                            >
+                              <Trash size={14} />
+                              <span>Remove</span>
+                            </button>
                           </div>
                         </div>
                       </div>
@@ -122,10 +120,8 @@ const CartDropdown = () => {
                   <span>Your shopping bag is empty.</span>
                   <div>
                     <Link href="/store">
-                      <>
-                        <span className="sr-only">Go to all products page</span>
-                        <Button onClick={close}>Explore products</Button>
-                      </>
+                      <span className="sr-only">Go to all products page</span>
+                      <Button onClick={close}>Explore products</Button>
                     </Link>
                   </div>
                 </div>

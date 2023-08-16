@@ -27,8 +27,8 @@ const Item = ({ item, region }: ItemProps) => {
         </div>
         <div className="text-base-regular flex flex-col gap-y-8">
           <div className="flex items-start justify-between">
-            <div className="flex flex-col">
-              <span>{item.title}</span>
+            <div className="flex flex-col flex-1">
+              <h3 className="text-xl font-semibold">{item.title}</h3>
               <LineItemOptions item={item} />
             </div>
             <NativeSelect
