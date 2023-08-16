@@ -27,7 +27,7 @@ const DesktopHits = ({
       )}
     >
       <div className="grid grid-cols-1">
-        {hits.map((hit, index) => (
+        {hits.filter(hit => hit.status === 'published').map((hit, index) => (
           <li key={index} className="list-none">
             <Hit hit={hit as unknown as ProductHit} />
           </li>
