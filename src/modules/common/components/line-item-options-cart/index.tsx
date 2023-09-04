@@ -41,10 +41,14 @@ const LineItemOptions = ({ item }: LineItemOptionsProps) => {
       })
       setCart(cart)
     } catch (error: any) {
-      if (error.response.code = 'insufficient_inventory') {
-        toast.error('Product is out of stock!')
-      }
-      if (stage === 'deleted') {
+      console.log(error.response)
+      if (error.response.data.code = 'insufficient_inventory') {
+        if(error.response.data.type === 'not_allowed') {
+          toast.error('Variant is out of stock!')
+        } else {
+          toast.error('Variant not available in your region!')
+        }
+      }       if (stage === 'deleted') {
         try {
           const { cart } = await addLineItem.mutateAsync({
             variant_id: item.variant_id!,

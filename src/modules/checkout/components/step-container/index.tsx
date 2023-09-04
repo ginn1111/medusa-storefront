@@ -18,8 +18,10 @@ const StepContainer = ({
   ...props
 }: StepContainerProps) => {
   const {
-    editAddresses: { state },
+    editAddresses: { state: _state },
+    outOfStock
   } = useCheckout()
+  const state = _state || (!_state && outOfStock)
   return (
     <div>
       <div

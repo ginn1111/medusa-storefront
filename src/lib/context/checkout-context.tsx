@@ -51,6 +51,7 @@ interface CheckoutContext {
   readyToComplete: boolean
   sameAsBilling: StateType
   editAddresses: StateType
+  outOfStock: boolean;
   initPayment: () => Promise<void>
   setAddresses: (addresses: CheckoutFormValues) => void
   setSavedAddress: (address: Address) => void
@@ -115,6 +116,8 @@ export const CheckoutProvider = ({ children }: CheckoutProviderProps) => {
       : true
   )
 
+  const items = cart?.items?.filter((item: any) => item.variant.inventory_quantity === 0)
+  const outOfStock = !!items?.length
 
   useEffect(() => {
     if (cart) {
@@ -136,7 +139,6 @@ export const CheckoutProvider = ({ children }: CheckoutProviderProps) => {
         }
       }
     }
-
   }, [cart])
 
 
@@ -324,7 +326,7 @@ export const CheckoutProvider = ({ children }: CheckoutProviderProps) => {
   }
 
   const handleUpdateCartError = () => {
-    toast.error('Ops something went wrong!')
+    toast.error('Variant do not exist!')
     resetCart();
     push('/store')
   }
@@ -410,6 +412,7 @@ export const CheckoutProvider = ({ children }: CheckoutProviderProps) => {
           readyToComplete,
           sameAsBilling,
           editAddresses,
+          outOfStock,
           initPayment,
           setAddresses,
           setSavedAddress,

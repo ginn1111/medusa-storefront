@@ -27,7 +27,7 @@ type ShippingFormProps = {
 
 const Shipping: React.FC<ShippingProps> = ({ cart }) => {
   const { addShippingMethod, setCart } = useCart()
-  const { setShippingOption } = useCheckout()
+  const { setShippingOption} = useCheckout()
   const {
     control,
     setError,

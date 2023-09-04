@@ -17,9 +17,12 @@ type PaymentButtonProps = {
 const PaymentButton: React.FC<PaymentButtonProps> = ({ paymentSession }) => {
   const [notReady, setNotReady] = useState(true)
   const { cart } = useCart()
+  const {outOfStock} = useCheckout()
 
   useEffect(() => {
     setNotReady(true)
+
+    if(outOfStock) return
 
     if (!cart) {
       return

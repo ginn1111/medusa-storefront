@@ -55,7 +55,7 @@ const ProductActions: React.FC<ProductActionsProps> = ({ product }) => {
       )}
 
       <div className="mb-4">
-        {selectedPrice ? (
+        {variant && selectedPrice ? (
           <div className="flex flex-col text-gray-700">
             <span
               className={clsx("text-xl-semi", {
